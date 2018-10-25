@@ -377,8 +377,9 @@ func generateGoFuncCode(m *method, buf *bytes.Buffer) error {
 		return nil
 	}
 
-	fmt.Fprintf(buf, "func (%s Env) %s(%s)%s {\n",
-		m.params[0].idName, m.name, m.toGo().paramList(), m.goRetVal())
+	fmt.Fprintf(buf, "func (%s %s) %s(%s)%s {\n",
+		m.params[0].idName, m.params[0].cType.toGo().TypeDesc(),
+		m.name, m.toGo().paramList(), m.goRetVal())
 
 	m.toGo().prepareReturn(buf)
 

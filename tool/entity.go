@@ -46,6 +46,12 @@ type cTypeGoOutput cType
 func (output *cTypeGoOutput) TypeDesc() string {
 	if output.isPtr {
 		switch output.typeName {
+		case "JNIEnv":
+			return "Env"
+
+		case "JavaVM":
+			return "VM"
+
 		case "void":
 			return "unsafe.Pointer"
 

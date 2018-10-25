@@ -819,11 +819,11 @@ func (env Env) SetDoubleArrayElement(array JdoubleArray, index int, v float64) {
 	C.SetDoubleArrayRegion((*C.JNIEnv)(unsafe.Pointer(env)), C.jdoubleArray(array), C.jsize(index), C.jsize(1), &cv)
 }
 
-func (vm Env) DestroyJavaVM() int {
+func (vm VM) DestroyJavaVM() int {
 	return int(C.DestroyJavaVM((*C.JavaVM)(unsafe.Pointer(vm))))
 }
 
-func (vm Env) DetachCurrentThread() int {
+func (vm VM) DetachCurrentThread() int {
 	return int(C.DetachCurrentThread((*C.JavaVM)(unsafe.Pointer(vm))))
 }
 
