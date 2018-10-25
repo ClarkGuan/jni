@@ -119,121 +119,122 @@ func (env Env) GetJavaVM() (VM, int) {
 	return VM(unsafe.Pointer(vm)), ret
 }
 
-func (env Env) GetObjectRefType(obj C.jobject) RefType {
-	return RefType(C.GetObjectRefType((*C.JNIEnv)(unsafe.Pointer(env)), obj))
+func (env Env) GetObjectRefType(obj uintptr) RefType {
+	return RefType(C.GetObjectRefType((*C.JNIEnv)(unsafe.Pointer(env)), C.jobject(obj)))
 }
 
-func (env Env) NewString(s string) C.jstring {
+func (env Env) NewString(s string) uintptr {
 	cstr_s := C.CString(s)
 	defer C.free(unsafe.Pointer(cstr_s))
-	return C.NewStringUTF((*C.JNIEnv)(unsafe.Pointer(env)), cstr_s)
+	return uintptr(C.NewStringUTF((*C.JNIEnv)(unsafe.Pointer(env)), cstr_s))
 }
 
-func (env Env) GetStringUTF(jstr C.jstring) []byte {
+func (env Env) GetStringUTF(ptr uintptr) []byte {
+	jstr := C.jstring(ptr)
 	size := C.GetStringUTFLength((*C.JNIEnv)(unsafe.Pointer(env)), jstr)
 	ret := make([]byte, int(size))
 	C.GetStringUTFRegion((*C.JNIEnv)(unsafe.Pointer(env)), jstr, C.jsize(0), size, cmem(ret))
 	return ret
 }
 
-func (env Env) NewDirectByteBuffer(address unsafe.Pointer, capacity int) C.jobject {
-	return C.NewDirectByteBuffer((*C.JNIEnv)(unsafe.Pointer(env)), address, C.jlong(capacity))
+func (env Env) NewDirectByteBuffer(address unsafe.Pointer, capacity int) uintptr {
+	return uintptr(C.NewDirectByteBuffer((*C.JNIEnv)(unsafe.Pointer(env)), address, C.jlong(capacity)))
 }
 
-func (env Env) GetDirectBufferAddress(buf C.jobject) unsafe.Pointer {
-	return C.GetDirectBufferAddress((*C.JNIEnv)(unsafe.Pointer(env)), buf)
+func (env Env) GetDirectBufferAddress(buf uintptr) unsafe.Pointer {
+	return C.GetDirectBufferAddress((*C.JNIEnv)(unsafe.Pointer(env)), C.jobject(buf))
 }
 
-func (env Env) GetDirectBufferCapacity(buf C.jobject) int {
-	return int(C.GetDirectBufferCapacity((*C.JNIEnv)(unsafe.Pointer(env)), buf))
+func (env Env) GetDirectBufferCapacity(buf uintptr) int {
+	return int(C.GetDirectBufferCapacity((*C.JNIEnv)(unsafe.Pointer(env)), C.jobject(buf)))
 }
 
-func (env Env) GetBooleanArrayElement(array C.jbooleanArray, index int) bool {
+func (env Env) GetBooleanArrayElement(array uintptr, index int) bool {
 	var ret C.jboolean
-	C.GetBooleanArrayRegion((*C.JNIEnv)(unsafe.Pointer(env)), array, C.jsize(index), C.jsize(1), &ret)
+	C.GetBooleanArrayRegion((*C.JNIEnv)(unsafe.Pointer(env)), C.jbooleanArray(array), C.jsize(index), C.jsize(1), &ret)
 	return ret != C.JNI_FALSE
 }
 
-func (env Env) GetByteArrayElement(array C.jbyteArray, index int) byte {
+func (env Env) GetByteArrayElement(array uintptr, index int) byte {
 	var ret C.jbyte
-	C.GetByteArrayRegion((*C.JNIEnv)(unsafe.Pointer(env)), array, C.jsize(index), C.jsize(1), &ret)
+	C.GetByteArrayRegion((*C.JNIEnv)(unsafe.Pointer(env)), C.jbyteArray(array), C.jsize(index), C.jsize(1), &ret)
 	return byte(ret)
 }
 
-func (env Env) GetCharArrayElement(array C.jcharArray, index int) uint16 {
+func (env Env) GetCharArrayElement(array uintptr, index int) uint16 {
 	var ret C.jchar
-	C.GetCharArrayRegion((*C.JNIEnv)(unsafe.Pointer(env)), array, C.jsize(index), C.jsize(1), &ret)
+	C.GetCharArrayRegion((*C.JNIEnv)(unsafe.Pointer(env)), C.jcharArray(array), C.jsize(index), C.jsize(1), &ret)
 	return uint16(ret)
 }
 
-func (env Env) GetShortArrayElement(array C.jshortArray, index int) int16 {
+func (env Env) GetShortArrayElement(array uintptr, index int) int16 {
 	var ret C.jshort
-	C.GetShortArrayRegion((*C.JNIEnv)(unsafe.Pointer(env)), array, C.jsize(index), C.jsize(1), &ret)
+	C.GetShortArrayRegion((*C.JNIEnv)(unsafe.Pointer(env)), C.jshortArray(array), C.jsize(index), C.jsize(1), &ret)
 	return int16(ret)
 }
 
-func (env Env) GetIntArrayElement(array C.jintArray, index int) int {
+func (env Env) GetIntArrayElement(array uintptr, index int) int {
 	var ret C.jint
-	C.GetIntArrayRegion((*C.JNIEnv)(unsafe.Pointer(env)), array, C.jsize(index), C.jsize(1), &ret)
+	C.GetIntArrayRegion((*C.JNIEnv)(unsafe.Pointer(env)), C.jintArray(array), C.jsize(index), C.jsize(1), &ret)
 	return int(ret)
 }
 
-func (env Env) GetLongArrayElement(array C.jlongArray, index int) int64 {
+func (env Env) GetLongArrayElement(array uintptr, index int) int64 {
 	var ret C.jlong
-	C.GetLongArrayRegion((*C.JNIEnv)(unsafe.Pointer(env)), array, C.jsize(index), C.jsize(1), &ret)
+	C.GetLongArrayRegion((*C.JNIEnv)(unsafe.Pointer(env)), C.jlongArray(array), C.jsize(index), C.jsize(1), &ret)
 	return int64(ret)
 }
 
-func (env Env) GetFloatArrayElement(array C.jfloatArray, index int) float32 {
+func (env Env) GetFloatArrayElement(array uintptr, index int) float32 {
 	var ret C.jfloat
-	C.GetFloatArrayRegion((*C.JNIEnv)(unsafe.Pointer(env)), array, C.jsize(index), C.jsize(1), &ret)
+	C.GetFloatArrayRegion((*C.JNIEnv)(unsafe.Pointer(env)), C.jfloatArray(array), C.jsize(index), C.jsize(1), &ret)
 	return float32(ret)
 }
 
-func (env Env) GetDoubleArrayElement(array C.jdoubleArray, index int) float64 {
+func (env Env) GetDoubleArrayElement(array uintptr, index int) float64 {
 	var ret C.jdouble
-	C.GetDoubleArrayRegion((*C.JNIEnv)(unsafe.Pointer(env)), array, C.jsize(index), C.jsize(1), &ret)
+	C.GetDoubleArrayRegion((*C.JNIEnv)(unsafe.Pointer(env)), C.jdoubleArray(array), C.jsize(index), C.jsize(1), &ret)
 	return float64(ret)
 }
 
-func (env Env) SetBooleanArrayElement(array C.jbooleanArray, index int, v bool) {
+func (env Env) SetBooleanArrayElement(array uintptr, index int, v bool) {
 	cv := cbool(v)
-	C.SetBooleanArrayRegion((*C.JNIEnv)(unsafe.Pointer(env)), array, C.jsize(index), C.jsize(1), &cv)
+	C.SetBooleanArrayRegion((*C.JNIEnv)(unsafe.Pointer(env)), C.jbooleanArray(array), C.jsize(index), C.jsize(1), &cv)
 }
 
-func (env Env) SetByteArrayElement(array C.jbyteArray, index int, v byte) {
+func (env Env) SetByteArrayElement(array uintptr, index int, v byte) {
 	cv := C.jbyte(v)
-	C.SetByteArrayRegion((*C.JNIEnv)(unsafe.Pointer(env)), array, C.jsize(index), C.jsize(1), &cv)
+	C.SetByteArrayRegion((*C.JNIEnv)(unsafe.Pointer(env)), C.jbyteArray(array), C.jsize(index), C.jsize(1), &cv)
 }
 
-func (env Env) SetCharArrayElement(array C.jcharArray, index int, v uint16) {
+func (env Env) SetCharArrayElement(array uintptr, index int, v uint16) {
 	cv := C.jchar(v)
-	C.SetCharArrayRegion((*C.JNIEnv)(unsafe.Pointer(env)), array, C.jsize(index), C.jsize(1), &cv)
+	C.SetCharArrayRegion((*C.JNIEnv)(unsafe.Pointer(env)), C.jcharArray(array), C.jsize(index), C.jsize(1), &cv)
 }
 
-func (env Env) SetShortArrayElement(array C.jshortArray, index int, v int16) {
+func (env Env) SetShortArrayElement(array uintptr, index int, v int16) {
 	cv := C.jshort(v)
-	C.SetShortArrayRegion((*C.JNIEnv)(unsafe.Pointer(env)), array, C.jsize(index), C.jsize(1), &cv)
+	C.SetShortArrayRegion((*C.JNIEnv)(unsafe.Pointer(env)), C.jshortArray(array), C.jsize(index), C.jsize(1), &cv)
 }
 
-func (env Env) SetIntArrayElement(array C.jintArray, index int, v int) {
+func (env Env) SetIntArrayElement(array uintptr, index int, v int) {
 	cv := C.jint(v)
-	C.SetIntArrayRegion((*C.JNIEnv)(unsafe.Pointer(env)), array, C.jsize(index), C.jsize(1), &cv)
+	C.SetIntArrayRegion((*C.JNIEnv)(unsafe.Pointer(env)), C.jintArray(array), C.jsize(index), C.jsize(1), &cv)
 }
 
-func (env Env) SetLongArrayElement(array C.jlongArray, index int, v int64) {
+func (env Env) SetLongArrayElement(array uintptr, index int, v int64) {
 	cv := C.jlong(v)
-	C.SetLongArrayRegion((*C.JNIEnv)(unsafe.Pointer(env)), array, C.jsize(index), C.jsize(1), &cv)
+	C.SetLongArrayRegion((*C.JNIEnv)(unsafe.Pointer(env)), C.jlongArray(array), C.jsize(index), C.jsize(1), &cv)
 }
 
-func (env Env) SetFloatArrayElement(array C.jfloatArray, index int, v float32) {
+func (env Env) SetFloatArrayElement(array uintptr, index int, v float32) {
 	cv := C.jfloat(v)
-	C.SetFloatArrayRegion((*C.JNIEnv)(unsafe.Pointer(env)), array, C.jsize(index), C.jsize(1), &cv)
+	C.SetFloatArrayRegion((*C.JNIEnv)(unsafe.Pointer(env)), C.jfloatArray(array), C.jsize(index), C.jsize(1), &cv)
 }
 
-func (env Env) SetDoubleArrayElement(array C.jdoubleArray, index int, v float64) {
+func (env Env) SetDoubleArrayElement(array uintptr, index int, v float64) {
 	cv := C.jdouble(v)
-	C.SetDoubleArrayRegion((*C.JNIEnv)(unsafe.Pointer(env)), array, C.jsize(index), C.jsize(1), &cv)
+	C.SetDoubleArrayRegion((*C.JNIEnv)(unsafe.Pointer(env)), C.jdoubleArray(array), C.jsize(index), C.jsize(1), &cv)
 }
 
 `)

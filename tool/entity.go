@@ -80,6 +80,12 @@ func (output *cTypeGoOutput) TypeDesc() string {
 
 		case "jdouble":
 			return "float64"
+
+		case "jobject", "jclass", "jthrowable", "jstring",
+			"jarray", "jbooleanArray", "jbyteArray", "jcharArray",
+			"jshortArray", "jintArray", "jlongArray", "jfloatArray",
+			"jdoubleArray", "jobjectArray", "jweak":
+			return "uintptr"
 		}
 	}
 
@@ -221,6 +227,12 @@ func (param *paramGoOutput) callDesc() string {
 			return fmt.Sprintf("cbool(%s)", param.idName)
 
 		case "jbyte", "jshort", "jchar", "jsize", "jint", "jlong", "jfloat", "jdouble":
+			return fmt.Sprintf("C.%s(%s)", param.typeName, param.idName)
+
+		case "jobject", "jclass", "jthrowable", "jstring",
+			"jarray", "jbooleanArray", "jbyteArray", "jcharArray",
+			"jshortArray", "jintArray", "jlongArray", "jfloatArray",
+			"jdoubleArray", "jobjectArray", "jweak":
 			return fmt.Sprintf("C.%s(%s)", param.typeName, param.idName)
 		}
 	}
@@ -455,6 +467,12 @@ func (output *methodGoOutput) beforeReturn(in string) string {
 
 		case "jdouble":
 			return fmt.Sprintf("float64(%s)", in)
+
+		case "jobject", "jclass", "jthrowable", "jstring",
+			"jarray", "jbooleanArray", "jbyteArray", "jcharArray",
+			"jshortArray", "jintArray", "jlongArray", "jfloatArray",
+			"jdoubleArray", "jobjectArray", "jweak":
+			return fmt.Sprintf("uintptr(%s)", in)
 		}
 	}
 
