@@ -3,6 +3,7 @@ package tool
 import (
 	"bytes"
 	"fmt"
+	"os"
 	"regexp"
 	"strings"
 	"unicode"
@@ -150,8 +151,8 @@ func parseJniMethodList(code string) (list []*method) {
 
 		if len(lines[i]) > 0 {
 			if m, err := parseSingleMethod([]byte(lines[i])); err != nil {
-				fmt.Printf("// // 匹配 %q\n", lines[i])
-				fmt.Println("// //", err)
+				fmt.Fprintf(os.Stderr, "// // 匹配 %q\n", lines[i])
+				fmt.Fprintln(os.Stderr, "// //", err)
 			} else {
 				//fmt.Printf("%s\n", m)
 				list = append(list, m)

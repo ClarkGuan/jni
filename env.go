@@ -656,10 +656,6 @@ func OfSlice(b []byte) unsafe.Pointer {
 
 type VM uintptr
 
-func JVMOf(vm *C.JavaVM) VM {
-	return VM(unsafe.Pointer(vm))
-}
-
 func (vm VM) AttachCurrentThread() (Env, int) {
 	var env *C.JNIEnv
 	ret := int(C.AttachCurrentThread((*C.JavaVM)(unsafe.Pointer(vm)), &env))
@@ -679,10 +675,6 @@ func (vm VM) GetEnv() (Env, int) {
 }
 
 type Env uintptr
-
-func EnvOf(env *C.JNIEnv) Env {
-	return Env(unsafe.Pointer(env))
-}
 
 func (env Env) GetJavaVM() (VM, int) {
 	var vm *C.JavaVM
