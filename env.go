@@ -1381,6 +1381,22 @@ func FloatToUint64(f float32) uint64 {
 	return uint64(*(*uint32)(unsafe.Pointer(&f)))
 }
 
+func Int8ToUint64(i int8) uint64 {
+	return uint64(*(*uint8)(unsafe.Pointer(&i)))
+}
+
+func Int16ToUint64(i int16) uint64 {
+	return uint64(*(*uint16)(unsafe.Pointer(&i)))
+}
+
+func Int32ToUint64(i int32) uint64 {
+	return uint64(*(*uint32)(unsafe.Pointer(&i)))
+}
+
+func IntToUint64(i int) uint64 {
+	return uint64(*(*uint)(unsafe.Pointer(&i)))
+}
+
 func BooleanToUint64(b bool) uint64 {
 	return uint64(cbool(b))
 }
