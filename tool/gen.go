@@ -95,6 +95,9 @@ type JdoubleArray = uintptr
 type JobjectArray = uintptr
 type Jweak = uintptr
 
+type JmethodID = uintptr
+type JfieldID = uintptr
+
 func CMalloc(capacity int) unsafe.Pointer {
 	return C.malloc(C.size_t(capacity))
 }

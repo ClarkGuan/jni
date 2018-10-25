@@ -86,6 +86,9 @@ func (output *cTypeGoOutput) TypeDesc() string {
 			"jshortArray", "jintArray", "jlongArray", "jfloatArray",
 			"jdoubleArray", "jobjectArray", "jweak":
 			return "J" + output.typeName[1:]
+
+		case "jmethodID", "jfieldID":
+			return "J" + output.typeName[1:]
 		}
 	}
 
@@ -234,6 +237,9 @@ func (param *paramGoOutput) callDesc() string {
 			"jshortArray", "jintArray", "jlongArray", "jfloatArray",
 			"jdoubleArray", "jobjectArray", "jweak":
 			return fmt.Sprintf("C.%s(%s)", param.typeName, param.idName)
+
+		case "jmethodID", "jfieldID":
+			return fmt.Sprintf("C.%s(unsafe.Pointer(%s))", param.typeName, param.idName)
 		}
 	}
 
@@ -473,6 +479,9 @@ func (output *methodGoOutput) beforeReturn(in string) string {
 			"jshortArray", "jintArray", "jlongArray", "jfloatArray",
 			"jdoubleArray", "jobjectArray", "jweak":
 			return fmt.Sprintf("%s(%s)", "J"+output.ret.typeName[1:], in)
+
+		case "jfieldID", "jmethodID":
+			return fmt.Sprintf("%s(unsafe.Pointer(%s))", "J"+output.ret.typeName[1:], in)
 		}
 	}
 
