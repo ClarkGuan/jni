@@ -659,19 +659,19 @@ type VM uintptr
 func (vm VM) AttachCurrentThread() (Env, int) {
 	var env *C.JNIEnv
 	ret := int(C.AttachCurrentThread((*C.JavaVM)(unsafe.Pointer(vm)), &env))
-	return EnvOf(env), ret
+	return Env(unsafe.Pointer(env)), ret
 }
 
 func (vm VM) AttachCurrentThreadAsDaemon() (Env, int) {
 	var env *C.JNIEnv
 	ret := int(C.AttachCurrentThreadAsDaemon((*C.JavaVM)(unsafe.Pointer(vm)), &env))
-	return EnvOf(env), ret
+	return Env(unsafe.Pointer(env)), ret
 }
 
 func (vm VM) GetEnv() (Env, int) {
 	var env *C.JNIEnv
 	ret := int(C.GetEnv((*C.JavaVM)(unsafe.Pointer(vm)), &env))
-	return EnvOf(env), ret
+	return Env(unsafe.Pointer(env)), ret
 }
 
 type Env uintptr
@@ -679,7 +679,7 @@ type Env uintptr
 func (env Env) GetJavaVM() (VM, int) {
 	var vm *C.JavaVM
 	ret := int(C.GetJavaVM((*C.JNIEnv)(unsafe.Pointer(env)), &vm))
-	return JVMOf(vm), ret
+	return VM(unsafe.Pointer(vm)), ret
 }
 
 func (env Env) GetObjectRefType(obj C.jobject) RefType {
