@@ -5,15 +5,15 @@ import (
 	"fmt"
 )
 
-func GenerateCode() string {
-	return generateCode(parseJniMethodList(headerCode))
+func GenerateCode(pkg string) string {
+	return generateCode(pkg, parseJniMethodList(headerCode))
 }
 
-func generateCode(list []*method) string {
+func generateCode(pkg string, list []*method) string {
 	buf := bytes.NewBuffer(nil)
 
-	fmt.Fprint(buf, `package jni
-
+	fmt.Fprintf(buf, "package %s\n", pkg)
+	fmt.Fprint(buf, `
 //
 // #include <jni.h>
 // #include <stdlib.h>

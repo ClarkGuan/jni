@@ -1,4 +1,4 @@
-package jni
+package demo
 
 //
 // #include <jni.h>

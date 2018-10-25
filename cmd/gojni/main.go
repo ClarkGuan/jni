@@ -1,11 +1,16 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 
 	"github.com/ClarkGuan/jni/tool"
 )
 
 func main() {
-	fmt.Println(tool.GenerateCode())
+	var pkg string
+	flag.StringVar(&pkg, "p", "jni", "指定 Go package 名称")
+	flag.Parse()
+
+	fmt.Println(tool.GenerateCode(pkg))
 }
