@@ -12,5 +12,3 @@
 *.out
 
 .idea
-env.go
-lib.go
