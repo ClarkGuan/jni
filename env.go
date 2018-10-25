@@ -628,6 +628,9 @@ const (
 	JNI_ENOMEM    = (-4) /* not enough memory */
 	JNI_EEXIST    = (-5) /* VM already created */
 	JNI_EINVAL    = (-6) /* invalid arguments */
+
+	JNI_COMMIT = 1
+	JNI_ABORT  = 2
 )
 
 type RefType int
@@ -1383,6 +1386,9 @@ func cbool(b bool) C.jboolean {
 }
 
 func cvals(v []uint64) *C.jvalue {
+	if len(v) == 0 {
+		return nil
+	}
 	return (*C.jvalue)(unsafe.Pointer(*(*uintptr)(unsafe.Pointer(&v))))
 }
 

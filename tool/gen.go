@@ -278,6 +278,9 @@ func cbool(b bool) C.jboolean {
 }
 
 func cvals(v []uint64) *C.jvalue {
+	if len(v) == 0 {
+		return nil
+	}
 	return (*C.jvalue)(unsafe.Pointer(*(*uintptr)(unsafe.Pointer(&v))))
 }
 
