@@ -85,7 +85,7 @@ func (output *cTypeGoOutput) TypeDesc() string {
 			"jarray", "jbooleanArray", "jbyteArray", "jcharArray",
 			"jshortArray", "jintArray", "jlongArray", "jfloatArray",
 			"jdoubleArray", "jobjectArray", "jweak":
-			return "uintptr"
+			return "J" + output.typeName[1:]
 		}
 	}
 
@@ -472,7 +472,7 @@ func (output *methodGoOutput) beforeReturn(in string) string {
 			"jarray", "jbooleanArray", "jbyteArray", "jcharArray",
 			"jshortArray", "jintArray", "jlongArray", "jfloatArray",
 			"jdoubleArray", "jobjectArray", "jweak":
-			return fmt.Sprintf("uintptr(%s)", in)
+			return fmt.Sprintf("%s(%s)", "J"+output.ret.typeName[1:], in)
 		}
 	}
 
