@@ -1401,6 +1401,10 @@ func BooleanToUint64(b bool) uint64 {
 	return uint64(cbool(b))
 }
 
+func Bool(b uint8) bool {
+	return b != 0
+}
+
 func cmem(b []byte) *C.char {
 	return (*C.char)(unsafe.Pointer(*(*uintptr)(unsafe.Pointer(&b))))
 }
