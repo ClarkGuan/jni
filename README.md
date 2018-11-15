@@ -73,7 +73,7 @@ func jni_edu_buaa_nativeHello1(env uintptr, clazz uintptr) {
 go build -buildmode=c-shared -ldflags="-w -s" -v -x -o libhello.dylib
 ```
 
-注意：我们需要将 JNI 的头文件引入，否则 C 编译器可能找不到。可以使用环境变量
+注意：需要将 JNI 的头文件引入，否则 C 编译器可能找不到。使用环境变量 `CGO_CFLAGS`:
 
 ```
 CGO_CFLAGS="-I$JAVA_HOME/include -I$JAVA_HOME/include/darwin" go build -buildmode=c-shared -ldflags="-w -s" -v -x -o libhello.dylib
@@ -85,7 +85,7 @@ CGO_CFLAGS="-I$JAVA_HOME/include -I$JAVA_HOME/include/darwin" go build -buildmod
 javac src/java/edu/buaa/Main.java
 ```
 
-* 我们将 libhello.dylib 放入 Java 虚拟机可以找到的位置（可以使用 Java 环境变量 java.library.path 指定）
+* 将 libhello.dylib 放入 Java 虚拟机可以找到的位置（通过 Java 环境变量 java.library.path 指定）
 
 * 运行 Java 程序
 
