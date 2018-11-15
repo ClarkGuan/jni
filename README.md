@@ -27,9 +27,12 @@ public class Main {
 
     public static void main(String[] args) {
         nativeHello();
+        System.out.println(stringFromJNI());
     }
 
     private static native void nativeHello();
+
+    private static native String stringFromJNI();
 }
 ```
 
@@ -49,22 +52,32 @@ package main
 // #include <stddef.h>
 // #include <stdint.h>
 import "C"
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/ClarkGuan/jni"
+)
 
 //export jniOnLoad
 func jniOnLoad(vm uintptr) {
-	fmt.Println("JNI_OnLoad...")
+	fmt.Println("JNI_OnLoad")
 }
 
 //export jniOnUnload
 func jniOnUnload(vm uintptr) {
-	// TODO
+	fmt.Println("JNI_OnUnload")
 }
 
 //export jni_edu_buaa_nativeHello1
 func jni_edu_buaa_nativeHello1(env uintptr, clazz uintptr) {
-	fmt.Println("Hello from Golang!")
+	fmt.Println("native hello form golang")
 }
+
+//export jni_edu_buaa_stringFromJNI2
+func jni_edu_buaa_stringFromJNI2(env uintptr, clazz uintptr) uintptr {
+	return jni.Env(env).NewString("This is string from Golang code!!!")
+}
+
 ```
 
 * 运行 go build 生成 Mac 上运行的动态库文件：
@@ -91,4 +104,12 @@ javac src/java/edu/buaa/Main.java
 
 ```
 java -cp src edu.buaa.Main
+```
+
+* 运行结果
+
+```
+JNI_OnLoad
+native hello form golang
+This is string from Golang code!!!
 ```
