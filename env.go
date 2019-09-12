@@ -569,6 +569,9 @@ package jni
 //     return (*env)->MonitorExit(env, obj);
 // }
 //
+// static inline jsize GetStringLength(JNIEnv * env, jstring obj) {
+//     return (*env)->GetStringLength(env, obj);
+// }
 //
 // static inline void GetStringUTFRegion(JNIEnv * env, jstring str, jsize start, jsize len, char * buf) {
 //     (*env)->GetStringUTFRegion(env, str, start, len, buf);
