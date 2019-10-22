@@ -1,7 +1,7 @@
 package jni
 
 //
-// #cgo darwin CFLAGS: -I$JAVA_HOME/include -I$JAVA_HOME/include/darwin
+// #cgo CFLAGS: -I$JAVA_HOME/include -I$JAVA_HOME/include/darwin
 //
 // #include <jni.h>
 // #include <stdlib.h>
