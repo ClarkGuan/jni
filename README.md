@@ -11,6 +11,14 @@
 go get github.com/ClarkGuan/jni
 ```
 
+* 安装前请确认 JNI 头文件在头文件搜索路径中可以被找到
+* 如果无法确认可以使用我的另一个工具 includejni(https://github.com/ClarkGuan/includejni)
+
+```bash
+go get github.com/ClarkGuan/includejni
+includejni go get github.com/ClarkGuan/jni
+```
+
 ### 使用举例
 
 我们假设您已经安装 JDK、Go 以及 C 编译器，这里以 Mac 平台为例：
