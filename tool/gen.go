@@ -15,7 +15,7 @@ func generateCode(pkg string, list []*method) string {
 	fmt.Fprintf(buf, "package %s\n", pkg)
 	fmt.Fprint(buf, `
 //
-// #cgo darwin CFLAGS: -I$JAVA_HOME/include -I$JAVA_HOME/include/darwin
+// #cgo CFLAGS: -I$JAVA_HOME/include -I$JAVA_HOME/include/darwin
 //
 // #include <jni.h>
 // #include <stdlib.h>
