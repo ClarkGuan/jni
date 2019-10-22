@@ -15,6 +15,8 @@ func generateCode(pkg string, list []*method) string {
 	fmt.Fprintf(buf, "package %s\n", pkg)
 	fmt.Fprint(buf, `
 //
+// #cgo darwin CFLAGS: -I$JAVA_HOME/include -I$JAVA_HOME/include/darwin
+//
 // #include <jni.h>
 // #include <stdlib.h>
 //
@@ -152,7 +154,7 @@ func (env Env) GetStringUTF(ptr Jstring) []byte {
 	jstr := C.jstring(ptr)
 	size := C.GetStringUTFLength((*C.JNIEnv)(unsafe.Pointer(env)), jstr)
 	ret := make([]byte, int(size))
-	C.GetStringUTFRegion((*C.JNIEnv)(unsafe.Pointer(env)), jstr, C.jsize(0), size, cmem(ret))
+	C.GetStringUTFRegion((*C.JNIEnv)(unsafe.Pointer(env)), jstr, C.jsize(0), C.GetStringLength((*C.JNIEnv)(unsafe.Pointer(env)), jstr), cmem(ret))
 	return ret
 }
 

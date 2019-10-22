@@ -6,7 +6,6 @@ var skipList = []string{
 
 	// 字符串操作
 	"NewString",
-	"GetStringLength",
 	"GetStringChars",
 	"ReleaseStringChars",
 	"GetStringCritical",

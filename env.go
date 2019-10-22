@@ -1,6 +1,8 @@
 package jni
 
 //
+// #cgo darwin CFLAGS: -I$JAVA_HOME/include -I$JAVA_HOME/include/darwin
+//
 // #include <jni.h>
 // #include <stdlib.h>
 //
@@ -418,6 +420,9 @@ package jni
 // }
 //
 //
+// static inline jsize GetStringLength(JNIEnv * env, jstring str) {
+//     return (*env)->GetStringLength(env, str);
+// }
 //
 //
 //
@@ -569,9 +574,6 @@ package jni
 //     return (*env)->MonitorExit(env, obj);
 // }
 //
-// static inline jsize GetStringLength(JNIEnv * env, jstring obj) {
-//     return (*env)->GetStringLength(env, obj);
-// }
 //
 // static inline void GetStringUTFRegion(JNIEnv * env, jstring str, jsize start, jsize len, char * buf) {
 //     (*env)->GetStringUTFRegion(env, str, start, len, buf);
@@ -1234,6 +1236,10 @@ func (env Env) SetStaticFloatField(clazz Jclass, fieldID JfieldID, value float32
 
 func (env Env) SetStaticDoubleField(clazz Jclass, fieldID JfieldID, value float64) {
 	C.SetStaticDoubleField((*C.JNIEnv)(unsafe.Pointer(env)), C.jclass(clazz), C.jfieldID(unsafe.Pointer(fieldID)), C.jdouble(value))
+}
+
+func (env Env) GetStringLength(str Jstring) int {
+	return int(C.GetStringLength((*C.JNIEnv)(unsafe.Pointer(env)), C.jstring(str)))
 }
 
 func (env Env) GetArrayLength(array Jarray) int {
