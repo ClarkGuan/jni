@@ -397,7 +397,7 @@ func (output *methodGoOutput) paramList() string {
 		fmt.Fprintf(buf, ", ")
 		fmt.Fprint(buf, output.params[len(output.params)-1].toGo().paramListDesc())
 	} else if output.isCallFunc() {
-		fmt.Fprintf(buf, ", %s ...uint64", output.params[len(output.params)-1].idName)
+		fmt.Fprintf(buf, ", %s ...Jvalue", output.params[len(output.params)-1].idName)
 	}
 
 	return buf.String()

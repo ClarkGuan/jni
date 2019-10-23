@@ -94,6 +94,7 @@ type JfloatArray = uintptr
 type JdoubleArray = uintptr
 type JobjectArray = uintptr
 type Jweak = uintptr
+type Jvalue = uint64
 
 type JmethodID = uintptr
 type JfieldID = uintptr
@@ -265,32 +266,32 @@ func (env Env) SetDoubleArrayElement(array JdoubleArray, index int, v float64) {
 	}
 
 	fmt.Fprint(buf, `
-func DoubleToUint64(f float64) uint64 {
-	return *(*uint64)(unsafe.Pointer(&f))
+func DoubleValue(f float64) Jvalue {
+	return *(*Jvalue)(unsafe.Pointer(&f))
 }
 
-func FloatToUint64(f float32) uint64 {
-	return uint64(*(*uint32)(unsafe.Pointer(&f)))
+func FloatValue(f float32) Jvalue {
+	return Jvalue(*(*uint32)(unsafe.Pointer(&f)))
 }
 
-func Int8ToUint64(i int8) uint64 {
-	return uint64(*(*uint8)(unsafe.Pointer(&i)))
+func Int8Value(i int8) Jvalue {
+	return Jvalue(*(*uint8)(unsafe.Pointer(&i)))
 }
 
-func Int16ToUint64(i int16) uint64 {
-	return uint64(*(*uint16)(unsafe.Pointer(&i)))
+func Int16Value(i int16) Jvalue {
+	return Jvalue(*(*uint16)(unsafe.Pointer(&i)))
 }
 
-func Int32ToUint64(i int32) uint64 {
-	return uint64(*(*uint32)(unsafe.Pointer(&i)))
+func Int32Value(i int32) Jvalue {
+	return Jvalue(*(*uint32)(unsafe.Pointer(&i)))
 }
 
-func IntToUint64(i int) uint64 {
-	return uint64(*(*uint)(unsafe.Pointer(&i)))
+func IntValue(i int) Jvalue {
+	return Jvalue(*(*uint)(unsafe.Pointer(&i)))
 }
 
-func BooleanToUint64(b bool) uint64 {
-	return uint64(cbool(b))
+func BooleanValue(b bool) Jvalue {
+	return Jvalue(cbool(b))
 }
 
 func Bool(b uint8) bool {
@@ -309,7 +310,7 @@ func cbool(b bool) C.jboolean {
 	}
 }
 
-func cvals(v []uint64) *C.jvalue {
+func cvals(v []Jvalue) *C.jvalue {
 	if len(v) == 0 {
 		return nil
 	}

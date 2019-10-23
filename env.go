@@ -660,6 +660,7 @@ type JfloatArray = uintptr
 type JdoubleArray = uintptr
 type JobjectArray = uintptr
 type Jweak = uintptr
+type Jvalue = uint64
 
 type JmethodID = uintptr
 type JfieldID = uintptr
@@ -928,7 +929,7 @@ func (env Env) AllocObject(clazz Jclass) Jobject {
 	return Jobject(C.AllocObject((*C.JNIEnv)(unsafe.Pointer(env)), C.jclass(clazz)))
 }
 
-func (env Env) NewObjectA(clazz Jclass, methodID JmethodID, args ...uint64) Jobject {
+func (env Env) NewObjectA(clazz Jclass, methodID JmethodID, args ...Jvalue) Jobject {
 	return Jobject(C.NewObjectA((*C.JNIEnv)(unsafe.Pointer(env)), C.jclass(clazz), C.jmethodID(unsafe.Pointer(methodID)), cvals(args)))
 }
 
@@ -948,83 +949,83 @@ func (env Env) GetMethodID(clazz Jclass, name string, sig string) JmethodID {
 	return JmethodID(unsafe.Pointer(C.GetMethodID((*C.JNIEnv)(unsafe.Pointer(env)), C.jclass(clazz), cstr_name, cstr_sig)))
 }
 
-func (env Env) CallObjectMethodA(obj Jobject, methodID JmethodID, args ...uint64) Jobject {
+func (env Env) CallObjectMethodA(obj Jobject, methodID JmethodID, args ...Jvalue) Jobject {
 	return Jobject(C.CallObjectMethodA((*C.JNIEnv)(unsafe.Pointer(env)), C.jobject(obj), C.jmethodID(unsafe.Pointer(methodID)), cvals(args)))
 }
 
-func (env Env) CallBooleanMethodA(obj Jobject, methodID JmethodID, args ...uint64) bool {
+func (env Env) CallBooleanMethodA(obj Jobject, methodID JmethodID, args ...Jvalue) bool {
 	return C.CallBooleanMethodA((*C.JNIEnv)(unsafe.Pointer(env)), C.jobject(obj), C.jmethodID(unsafe.Pointer(methodID)), cvals(args)) != C.JNI_FALSE
 }
 
-func (env Env) CallByteMethodA(obj Jobject, methodID JmethodID, args ...uint64) byte {
+func (env Env) CallByteMethodA(obj Jobject, methodID JmethodID, args ...Jvalue) byte {
 	return byte(C.CallByteMethodA((*C.JNIEnv)(unsafe.Pointer(env)), C.jobject(obj), C.jmethodID(unsafe.Pointer(methodID)), cvals(args)))
 }
 
-func (env Env) CallCharMethodA(obj Jobject, methodID JmethodID, args ...uint64) uint16 {
+func (env Env) CallCharMethodA(obj Jobject, methodID JmethodID, args ...Jvalue) uint16 {
 	return uint16(C.CallCharMethodA((*C.JNIEnv)(unsafe.Pointer(env)), C.jobject(obj), C.jmethodID(unsafe.Pointer(methodID)), cvals(args)))
 }
 
-func (env Env) CallShortMethodA(obj Jobject, methodID JmethodID, args ...uint64) int16 {
+func (env Env) CallShortMethodA(obj Jobject, methodID JmethodID, args ...Jvalue) int16 {
 	return int16(C.CallShortMethodA((*C.JNIEnv)(unsafe.Pointer(env)), C.jobject(obj), C.jmethodID(unsafe.Pointer(methodID)), cvals(args)))
 }
 
-func (env Env) CallIntMethodA(obj Jobject, methodID JmethodID, args ...uint64) int {
+func (env Env) CallIntMethodA(obj Jobject, methodID JmethodID, args ...Jvalue) int {
 	return int(C.CallIntMethodA((*C.JNIEnv)(unsafe.Pointer(env)), C.jobject(obj), C.jmethodID(unsafe.Pointer(methodID)), cvals(args)))
 }
 
-func (env Env) CallLongMethodA(obj Jobject, methodID JmethodID, args ...uint64) int64 {
+func (env Env) CallLongMethodA(obj Jobject, methodID JmethodID, args ...Jvalue) int64 {
 	return int64(C.CallLongMethodA((*C.JNIEnv)(unsafe.Pointer(env)), C.jobject(obj), C.jmethodID(unsafe.Pointer(methodID)), cvals(args)))
 }
 
-func (env Env) CallFloatMethodA(obj Jobject, methodID JmethodID, args ...uint64) float32 {
+func (env Env) CallFloatMethodA(obj Jobject, methodID JmethodID, args ...Jvalue) float32 {
 	return float32(C.CallFloatMethodA((*C.JNIEnv)(unsafe.Pointer(env)), C.jobject(obj), C.jmethodID(unsafe.Pointer(methodID)), cvals(args)))
 }
 
-func (env Env) CallDoubleMethodA(obj Jobject, methodID JmethodID, args ...uint64) float64 {
+func (env Env) CallDoubleMethodA(obj Jobject, methodID JmethodID, args ...Jvalue) float64 {
 	return float64(C.CallDoubleMethodA((*C.JNIEnv)(unsafe.Pointer(env)), C.jobject(obj), C.jmethodID(unsafe.Pointer(methodID)), cvals(args)))
 }
 
-func (env Env) CallVoidMethodA(obj Jobject, methodID JmethodID, args ...uint64) {
+func (env Env) CallVoidMethodA(obj Jobject, methodID JmethodID, args ...Jvalue) {
 	C.CallVoidMethodA((*C.JNIEnv)(unsafe.Pointer(env)), C.jobject(obj), C.jmethodID(unsafe.Pointer(methodID)), cvals(args))
 }
 
-func (env Env) CallNonvirtualObjectMethodA(obj Jobject, clazz Jclass, methodID JmethodID, args ...uint64) Jobject {
+func (env Env) CallNonvirtualObjectMethodA(obj Jobject, clazz Jclass, methodID JmethodID, args ...Jvalue) Jobject {
 	return Jobject(C.CallNonvirtualObjectMethodA((*C.JNIEnv)(unsafe.Pointer(env)), C.jobject(obj), C.jclass(clazz), C.jmethodID(unsafe.Pointer(methodID)), cvals(args)))
 }
 
-func (env Env) CallNonvirtualBooleanMethodA(obj Jobject, clazz Jclass, methodID JmethodID, args ...uint64) bool {
+func (env Env) CallNonvirtualBooleanMethodA(obj Jobject, clazz Jclass, methodID JmethodID, args ...Jvalue) bool {
 	return C.CallNonvirtualBooleanMethodA((*C.JNIEnv)(unsafe.Pointer(env)), C.jobject(obj), C.jclass(clazz), C.jmethodID(unsafe.Pointer(methodID)), cvals(args)) != C.JNI_FALSE
 }
 
-func (env Env) CallNonvirtualByteMethodA(obj Jobject, clazz Jclass, methodID JmethodID, args ...uint64) byte {
+func (env Env) CallNonvirtualByteMethodA(obj Jobject, clazz Jclass, methodID JmethodID, args ...Jvalue) byte {
 	return byte(C.CallNonvirtualByteMethodA((*C.JNIEnv)(unsafe.Pointer(env)), C.jobject(obj), C.jclass(clazz), C.jmethodID(unsafe.Pointer(methodID)), cvals(args)))
 }
 
-func (env Env) CallNonvirtualCharMethodA(obj Jobject, clazz Jclass, methodID JmethodID, args ...uint64) uint16 {
+func (env Env) CallNonvirtualCharMethodA(obj Jobject, clazz Jclass, methodID JmethodID, args ...Jvalue) uint16 {
 	return uint16(C.CallNonvirtualCharMethodA((*C.JNIEnv)(unsafe.Pointer(env)), C.jobject(obj), C.jclass(clazz), C.jmethodID(unsafe.Pointer(methodID)), cvals(args)))
 }
 
-func (env Env) CallNonvirtualShortMethodA(obj Jobject, clazz Jclass, methodID JmethodID, args ...uint64) int16 {
+func (env Env) CallNonvirtualShortMethodA(obj Jobject, clazz Jclass, methodID JmethodID, args ...Jvalue) int16 {
 	return int16(C.CallNonvirtualShortMethodA((*C.JNIEnv)(unsafe.Pointer(env)), C.jobject(obj), C.jclass(clazz), C.jmethodID(unsafe.Pointer(methodID)), cvals(args)))
 }
 
-func (env Env) CallNonvirtualIntMethodA(obj Jobject, clazz Jclass, methodID JmethodID, args ...uint64) int {
+func (env Env) CallNonvirtualIntMethodA(obj Jobject, clazz Jclass, methodID JmethodID, args ...Jvalue) int {
 	return int(C.CallNonvirtualIntMethodA((*C.JNIEnv)(unsafe.Pointer(env)), C.jobject(obj), C.jclass(clazz), C.jmethodID(unsafe.Pointer(methodID)), cvals(args)))
 }
 
-func (env Env) CallNonvirtualLongMethodA(obj Jobject, clazz Jclass, methodID JmethodID, args ...uint64) int64 {
+func (env Env) CallNonvirtualLongMethodA(obj Jobject, clazz Jclass, methodID JmethodID, args ...Jvalue) int64 {
 	return int64(C.CallNonvirtualLongMethodA((*C.JNIEnv)(unsafe.Pointer(env)), C.jobject(obj), C.jclass(clazz), C.jmethodID(unsafe.Pointer(methodID)), cvals(args)))
 }
 
-func (env Env) CallNonvirtualFloatMethodA(obj Jobject, clazz Jclass, methodID JmethodID, args ...uint64) float32 {
+func (env Env) CallNonvirtualFloatMethodA(obj Jobject, clazz Jclass, methodID JmethodID, args ...Jvalue) float32 {
 	return float32(C.CallNonvirtualFloatMethodA((*C.JNIEnv)(unsafe.Pointer(env)), C.jobject(obj), C.jclass(clazz), C.jmethodID(unsafe.Pointer(methodID)), cvals(args)))
 }
 
-func (env Env) CallNonvirtualDoubleMethodA(obj Jobject, clazz Jclass, methodID JmethodID, args ...uint64) float64 {
+func (env Env) CallNonvirtualDoubleMethodA(obj Jobject, clazz Jclass, methodID JmethodID, args ...Jvalue) float64 {
 	return float64(C.CallNonvirtualDoubleMethodA((*C.JNIEnv)(unsafe.Pointer(env)), C.jobject(obj), C.jclass(clazz), C.jmethodID(unsafe.Pointer(methodID)), cvals(args)))
 }
 
-func (env Env) CallNonvirtualVoidMethodA(obj Jobject, clazz Jclass, methodID JmethodID, args ...uint64) {
+func (env Env) CallNonvirtualVoidMethodA(obj Jobject, clazz Jclass, methodID JmethodID, args ...Jvalue) {
 	C.CallNonvirtualVoidMethodA((*C.JNIEnv)(unsafe.Pointer(env)), C.jobject(obj), C.jclass(clazz), C.jmethodID(unsafe.Pointer(methodID)), cvals(args))
 }
 
@@ -1116,43 +1117,43 @@ func (env Env) GetStaticMethodID(clazz Jclass, name string, sig string) JmethodI
 	return JmethodID(unsafe.Pointer(C.GetStaticMethodID((*C.JNIEnv)(unsafe.Pointer(env)), C.jclass(clazz), cstr_name, cstr_sig)))
 }
 
-func (env Env) CallStaticObjectMethodA(clazz Jclass, methodID JmethodID, args ...uint64) Jobject {
+func (env Env) CallStaticObjectMethodA(clazz Jclass, methodID JmethodID, args ...Jvalue) Jobject {
 	return Jobject(C.CallStaticObjectMethodA((*C.JNIEnv)(unsafe.Pointer(env)), C.jclass(clazz), C.jmethodID(unsafe.Pointer(methodID)), cvals(args)))
 }
 
-func (env Env) CallStaticBooleanMethodA(clazz Jclass, methodID JmethodID, args ...uint64) bool {
+func (env Env) CallStaticBooleanMethodA(clazz Jclass, methodID JmethodID, args ...Jvalue) bool {
 	return C.CallStaticBooleanMethodA((*C.JNIEnv)(unsafe.Pointer(env)), C.jclass(clazz), C.jmethodID(unsafe.Pointer(methodID)), cvals(args)) != C.JNI_FALSE
 }
 
-func (env Env) CallStaticByteMethodA(clazz Jclass, methodID JmethodID, args ...uint64) byte {
+func (env Env) CallStaticByteMethodA(clazz Jclass, methodID JmethodID, args ...Jvalue) byte {
 	return byte(C.CallStaticByteMethodA((*C.JNIEnv)(unsafe.Pointer(env)), C.jclass(clazz), C.jmethodID(unsafe.Pointer(methodID)), cvals(args)))
 }
 
-func (env Env) CallStaticCharMethodA(clazz Jclass, methodID JmethodID, args ...uint64) uint16 {
+func (env Env) CallStaticCharMethodA(clazz Jclass, methodID JmethodID, args ...Jvalue) uint16 {
 	return uint16(C.CallStaticCharMethodA((*C.JNIEnv)(unsafe.Pointer(env)), C.jclass(clazz), C.jmethodID(unsafe.Pointer(methodID)), cvals(args)))
 }
 
-func (env Env) CallStaticShortMethodA(clazz Jclass, methodID JmethodID, args ...uint64) int16 {
+func (env Env) CallStaticShortMethodA(clazz Jclass, methodID JmethodID, args ...Jvalue) int16 {
 	return int16(C.CallStaticShortMethodA((*C.JNIEnv)(unsafe.Pointer(env)), C.jclass(clazz), C.jmethodID(unsafe.Pointer(methodID)), cvals(args)))
 }
 
-func (env Env) CallStaticIntMethodA(clazz Jclass, methodID JmethodID, args ...uint64) int {
+func (env Env) CallStaticIntMethodA(clazz Jclass, methodID JmethodID, args ...Jvalue) int {
 	return int(C.CallStaticIntMethodA((*C.JNIEnv)(unsafe.Pointer(env)), C.jclass(clazz), C.jmethodID(unsafe.Pointer(methodID)), cvals(args)))
 }
 
-func (env Env) CallStaticLongMethodA(clazz Jclass, methodID JmethodID, args ...uint64) int64 {
+func (env Env) CallStaticLongMethodA(clazz Jclass, methodID JmethodID, args ...Jvalue) int64 {
 	return int64(C.CallStaticLongMethodA((*C.JNIEnv)(unsafe.Pointer(env)), C.jclass(clazz), C.jmethodID(unsafe.Pointer(methodID)), cvals(args)))
 }
 
-func (env Env) CallStaticFloatMethodA(clazz Jclass, methodID JmethodID, args ...uint64) float32 {
+func (env Env) CallStaticFloatMethodA(clazz Jclass, methodID JmethodID, args ...Jvalue) float32 {
 	return float32(C.CallStaticFloatMethodA((*C.JNIEnv)(unsafe.Pointer(env)), C.jclass(clazz), C.jmethodID(unsafe.Pointer(methodID)), cvals(args)))
 }
 
-func (env Env) CallStaticDoubleMethodA(clazz Jclass, methodID JmethodID, args ...uint64) float64 {
+func (env Env) CallStaticDoubleMethodA(clazz Jclass, methodID JmethodID, args ...Jvalue) float64 {
 	return float64(C.CallStaticDoubleMethodA((*C.JNIEnv)(unsafe.Pointer(env)), C.jclass(clazz), C.jmethodID(unsafe.Pointer(methodID)), cvals(args)))
 }
 
-func (env Env) CallStaticVoidMethodA(cls Jclass, methodID JmethodID, args ...uint64) {
+func (env Env) CallStaticVoidMethodA(cls Jclass, methodID JmethodID, args ...Jvalue) {
 	C.CallStaticVoidMethodA((*C.JNIEnv)(unsafe.Pointer(env)), C.jclass(cls), C.jmethodID(unsafe.Pointer(methodID)), cvals(args))
 }
 
@@ -1380,32 +1381,32 @@ func (env Env) ExceptionCheck() bool {
 	return C.ExceptionCheck((*C.JNIEnv)(unsafe.Pointer(env))) != C.JNI_FALSE
 }
 
-func DoubleToUint64(f float64) uint64 {
-	return *(*uint64)(unsafe.Pointer(&f))
+func DoubleValue(f float64) Jvalue {
+	return *(*Jvalue)(unsafe.Pointer(&f))
 }
 
-func FloatToUint64(f float32) uint64 {
-	return uint64(*(*uint32)(unsafe.Pointer(&f)))
+func FloatValue(f float32) Jvalue {
+	return Jvalue(*(*uint32)(unsafe.Pointer(&f)))
 }
 
-func Int8ToUint64(i int8) uint64 {
-	return uint64(*(*uint8)(unsafe.Pointer(&i)))
+func Int8Value(i int8) Jvalue {
+	return Jvalue(*(*uint8)(unsafe.Pointer(&i)))
 }
 
-func Int16ToUint64(i int16) uint64 {
-	return uint64(*(*uint16)(unsafe.Pointer(&i)))
+func Int16Value(i int16) Jvalue {
+	return Jvalue(*(*uint16)(unsafe.Pointer(&i)))
 }
 
-func Int32ToUint64(i int32) uint64 {
-	return uint64(*(*uint32)(unsafe.Pointer(&i)))
+func Int32Value(i int32) Jvalue {
+	return Jvalue(*(*uint32)(unsafe.Pointer(&i)))
 }
 
-func IntToUint64(i int) uint64 {
-	return uint64(*(*uint)(unsafe.Pointer(&i)))
+func IntValue(i int) Jvalue {
+	return Jvalue(*(*uint)(unsafe.Pointer(&i)))
 }
 
-func BooleanToUint64(b bool) uint64 {
-	return uint64(cbool(b))
+func BooleanValue(b bool) Jvalue {
+	return Jvalue(cbool(b))
 }
 
 func Bool(b uint8) bool {
@@ -1424,7 +1425,7 @@ func cbool(b bool) C.jboolean {
 	}
 }
 
-func cvals(v []uint64) *C.jvalue {
+func cvals(v []Jvalue) *C.jvalue {
 	if len(v) == 0 {
 		return nil
 	}
