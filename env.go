@@ -12,8 +12,8 @@ package jni
 //     return (*vm)->AttachCurrentThreadAsDaemon(vm, (void **) p_env, NULL);
 // }
 //
-// static inline jint GetEnv(JavaVM *vm, JNIEnv **penv) {
-//     return (*vm)->GetEnv(vm, (void **) penv, JNI_VERSION_1_2);
+// static inline jint GetEnv(JavaVM *vm, JNIEnv **penv, jint version) {
+//     return (*vm)->GetEnv(vm, (void **) penv, version);
 // }
 //
 // static inline jint GetJavaVM(JNIEnv * env, JavaVM **vm) {
@@ -39,7 +39,6 @@ package jni
 // static inline jint GetVersion(JNIEnv * env) {
 //     return (*env)->GetVersion(env);
 // }
-//
 //
 // static inline jmethodID FromReflectedMethod(JNIEnv * env, jobject method) {
 //     return (*env)->FromReflectedMethod(env, method);
@@ -417,12 +416,9 @@ package jni
 //     (*env)->SetStaticDoubleField(env, clazz, fieldID, value);
 // }
 //
-//
 // static inline jsize GetStringLength(JNIEnv * env, jstring str) {
 //     return (*env)->GetStringLength(env, str);
 // }
-//
-//
 //
 // static inline jstring NewStringUTF(JNIEnv * env, char * utf) {
 //     return (*env)->NewStringUTF(env, utf);
@@ -431,8 +427,6 @@ package jni
 // static inline jsize GetStringUTFLength(JNIEnv * env, jstring str) {
 //     return (*env)->GetStringUTFLength(env, str);
 // }
-//
-//
 //
 // static inline jsize GetArrayLength(JNIEnv * env, jarray array) {
 //     return (*env)->GetArrayLength(env, array);
@@ -481,22 +475,6 @@ package jni
 // static inline jdoubleArray NewDoubleArray(JNIEnv * env, jsize len) {
 //     return (*env)->NewDoubleArray(env, len);
 // }
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 //
 // static inline void GetBooleanArrayRegion(JNIEnv * env, jbooleanArray array, jsize start, jsize l, jboolean * buf) {
 //     (*env)->GetBooleanArrayRegion(env, array, start, l, buf);
@@ -562,8 +540,6 @@ package jni
 //     (*env)->SetDoubleArrayRegion(env, array, start, len, buf);
 // }
 //
-//
-//
 // static inline jint MonitorEnter(JNIEnv * env, jobject obj) {
 //     return (*env)->MonitorEnter(env, obj);
 // }
@@ -571,7 +547,6 @@ package jni
 // static inline jint MonitorExit(JNIEnv * env, jobject obj) {
 //     return (*env)->MonitorExit(env, obj);
 // }
-//
 //
 // static inline void GetStringUTFRegion(JNIEnv * env, jstring str, jsize start, jsize len, char * buf) {
 //     (*env)->GetStringUTFRegion(env, str, start, len, buf);
@@ -584,8 +559,6 @@ package jni
 // static inline void ReleasePrimitiveArrayCritical(JNIEnv * env, jarray array, void * carray, jint mode) {
 //     (*env)->ReleasePrimitiveArrayCritical(env, array, carray, mode);
 // }
-//
-//
 //
 // static inline jweak NewWeakGlobalRef(JNIEnv * env, jobject obj) {
 //     return (*env)->NewWeakGlobalRef(env, obj);
@@ -610,7 +583,6 @@ package jni
 // static inline jlong GetDirectBufferCapacity(JNIEnv * env, jobject buf) {
 //     return (*env)->GetDirectBufferCapacity(env, buf);
 // }
-//
 //
 import "C"
 import "unsafe"
@@ -691,9 +663,9 @@ func (vm VM) AttachCurrentThreadAsDaemon() (Env, int) {
 	return Env(unsafe.Pointer(env)), ret
 }
 
-func (vm VM) GetEnv() (Env, int) {
+func (vm VM) GetEnv(version int) (Env, int) {
 	var env *C.JNIEnv
-	ret := int(C.GetEnv((*C.JavaVM)(unsafe.Pointer(vm)), &env))
+	ret := int(C.GetEnv((*C.JavaVM)(unsafe.Pointer(vm)), &env, C.jint(version)))
 	return Env(unsafe.Pointer(env)), ret
 }
 

@@ -26,8 +26,8 @@ func generateCode(pkg string, list []*method) string {
 //     return (*vm)->AttachCurrentThreadAsDaemon(vm, (void **) p_env, NULL);
 // }
 //
-// static inline jint GetEnv(JavaVM *vm, JNIEnv **penv) {
-//     return (*vm)->GetEnv(vm, (void **) penv, JNI_VERSION_1_2);
+// static inline jint GetEnv(JavaVM *vm, JNIEnv **penv, jint version) {
+//     return (*vm)->GetEnv(vm, (void **) penv, version);
 // }
 //
 // static inline jint GetJavaVM(JNIEnv * env, JavaVM **vm) {
@@ -41,8 +41,10 @@ func generateCode(pkg string, list []*method) string {
 `)
 
 	for _, m := range list {
-		if err := generateFuncCode(m, buf); err == nil {
-			fmt.Fprintln(buf, "//")
+		if skip, err := generateFuncCode(m, buf); err == nil {
+			if !skip {
+				fmt.Fprintln(buf, "//")
+			}
 		}
 	}
 
@@ -125,9 +127,9 @@ func (vm VM) AttachCurrentThreadAsDaemon() (Env, int) {
 	return Env(unsafe.Pointer(env)), ret
 }
 
-func (vm VM) GetEnv() (Env, int) {
+func (vm VM) GetEnv(version int) (Env, int) {
 	var env *C.JNIEnv
-	ret := int(C.GetEnv((*C.JavaVM)(unsafe.Pointer(vm)), &env))
+	ret := int(C.GetEnv((*C.JavaVM)(unsafe.Pointer(vm)), &env, C.jint(version)))
 	return Env(unsafe.Pointer(env)), ret
 }
 
@@ -260,13 +262,14 @@ func (env Env) SetDoubleArrayElement(array JdoubleArray, index int, v float64) {
 `)
 
 	for _, m := range list {
-		if err := generateGoFuncCode(m, buf); err == nil {
-			fmt.Fprintln(buf)
+		if skip, err := generateGoFuncCode(m, buf); err == nil {
+			if !skip {
+				fmt.Fprintln(buf)
+			}
 		}
 	}
 
-	fmt.Fprint(buf, `
-func DoubleValue(f float64) Jvalue {
+	fmt.Fprint(buf, `func DoubleValue(f float64) Jvalue {
 	return *(*Jvalue)(unsafe.Pointer(&f))
 }
 
@@ -356,14 +359,14 @@ func cDoubleArray(a []float64) *C.jdouble {
 //
 // 处理参数，去掉参数中的 const
 // 处理返回值，去掉返回值中的 const
-func generateFuncCode(m *method, buf *bytes.Buffer) (err error) {
+func generateFuncCode(m *method, buf *bytes.Buffer) (skip bool, err error) {
 	if m.isVarArgs() || m.isVaList() {
-		return fmt.Errorf("%s 处理不了不定参数的情况", m)
+		return false, fmt.Errorf("%s 处理不了不定参数的情况", m)
 	}
 
 	if containsInSkipList(m.name, skipList) {
 		// 忽略
-		return nil
+		return true, nil
 	}
 
 	fmt.Fprintf(buf, "// static inline %s %s(%s) {\n",
@@ -385,17 +388,17 @@ func generateFuncCode(m *method, buf *bytes.Buffer) (err error) {
 		expr)
 	fmt.Fprint(buf, "// }\n")
 
-	return nil
+	return false, nil
 }
 
-func generateGoFuncCode(m *method, buf *bytes.Buffer) error {
+func generateGoFuncCode(m *method, buf *bytes.Buffer) (bool, error) {
 	if m.isVarArgs() || m.isVaList() {
-		return fmt.Errorf("%s 处理不了不定参数的情况", m)
+		return false, fmt.Errorf("%s 处理不了不定参数的情况", m)
 	}
 
 	if containsInSkipList(m.name, skipList) || containsInSkipList(m.name, goSkipList) {
 		// 忽略
-		return nil
+		return true, nil
 	}
 
 	fmt.Fprintf(buf, "func (%s %s) %s(%s)%s {\n",
@@ -414,10 +417,10 @@ func generateGoFuncCode(m *method, buf *bytes.Buffer) error {
 		m.toGo().callList())
 	expr = m.toGo().beforeReturn(expr)
 
-	fmt.Fprintf(buf, "    %s%s\n",
+	fmt.Fprintf(buf, "\t%s%s\n",
 		ret,
 		expr)
 	fmt.Fprint(buf, "}\n")
 
-	return nil
+	return false, nil
 }

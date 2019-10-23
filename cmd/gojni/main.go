@@ -12,5 +12,5 @@ func main() {
 	flag.StringVar(&pkg, "p", "jni", "指定 Go package 名称")
 	flag.Parse()
 
-	fmt.Println(tool.GenerateCode(pkg))
+	fmt.Print(tool.GenerateCode(pkg))
 }

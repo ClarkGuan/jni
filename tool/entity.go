@@ -497,8 +497,8 @@ func (output *methodGoOutput) beforeReturn(in string) string {
 func (output *methodGoOutput) prepareReturn(buf *bytes.Buffer) {
 	for _, p := range output.params {
 		if p.isPtr && p.typeName == "char" {
-			fmt.Fprintf(buf, "    cstr_%s := C.CString(%s)\n", p.idName, p.idName)
-			fmt.Fprintf(buf, "    defer C.free(unsafe.Pointer(cstr_%s))\n", p.idName)
+			fmt.Fprintf(buf, "\tcstr_%s := C.CString(%s)\n", p.idName, p.idName)
+			fmt.Fprintf(buf, "\tdefer C.free(unsafe.Pointer(cstr_%s))\n", p.idName)
 		}
 	}
 }
