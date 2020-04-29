@@ -416,12 +416,12 @@ package jni
 //     (*env)->SetStaticDoubleField(env, clazz, fieldID, value);
 // }
 //
-// static inline jsize GetStringLength(JNIEnv * env, jstring str) {
-//     return (*env)->GetStringLength(env, str);
+// static inline jstring NewString(JNIEnv * env, jchar * unicode, jsize len) {
+//     return (*env)->NewString(env, unicode, len);
 // }
 //
-// static inline jstring NewStringUTF(JNIEnv * env, char * utf) {
-//     return (*env)->NewStringUTF(env, utf);
+// static inline jsize GetStringLength(JNIEnv * env, jstring str) {
+//     return (*env)->GetStringLength(env, str);
 // }
 //
 // static inline jsize GetStringUTFLength(JNIEnv * env, jstring str) {
@@ -585,7 +585,10 @@ package jni
 // }
 //
 import "C"
-import "unsafe"
+import (
+	"unicode/utf16"
+	"unsafe"
+)
 
 const (
 	JNI_VERSION_1_1 = 0x00010001
@@ -682,9 +685,13 @@ func (env Env) GetObjectRefType(obj Jobject) RefType {
 }
 
 func (env Env) NewString(s string) Jstring {
-	cstr_s := C.CString(s)
-	defer C.free(unsafe.Pointer(cstr_s))
-	return Jstring(C.NewStringUTF((*C.JNIEnv)(unsafe.Pointer(env)), cstr_s))
+	codes := utf16.Encode([]rune(s))
+	size := len(codes)
+	if size <= 0 {
+		return 0
+	} else {
+		return Jstring(C.NewString((*C.JNIEnv)(unsafe.Pointer(env)), (*C.jchar)(unsafe.Pointer(&codes[0])), C.jsize(size)))
+	}
 }
 
 func (env Env) GetStringUTF(ptr Jstring) []byte {

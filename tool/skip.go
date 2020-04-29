@@ -5,7 +5,7 @@ var skipList = []string{
 	"DefineClass",
 
 	// 字符串操作
-	"NewString",
+	"NewStringUTF",
 	"GetStringChars",
 	"ReleaseStringChars",
 	"GetStringCritical",
@@ -42,6 +42,7 @@ var skipList = []string{
 
 var goSkipList = []string{
 	// 字符串操作
+	"NewString",
 	"NewStringUTF",
 	"GetStringUTFLength",
 	"GetStringUTFRegion",
