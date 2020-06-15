@@ -55,7 +55,7 @@ public class Main {
 }
 ```
 
-* 运行 gojni 工具（安装方法见：https://github.com/ClarkGuan/gojni）
+* 运行 gojni 工具（ 安装方法见：https://github.com/ClarkGuan/gojni ）
 
 ```
 gojni src/java/com/demo/Main.java
