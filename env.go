@@ -584,6 +584,10 @@ package jni
 //     return (*env)->GetDirectBufferCapacity(env, buf);
 // }
 //
+// static inline jobject GetModule(JNIEnv * env, jclass clazz) {
+//     return (*env)->GetModule(env, clazz);
+// }
+//
 import "C"
 import (
 	"unicode/utf16"
@@ -595,6 +599,9 @@ const (
 	JNI_VERSION_1_2 = 0x00010002
 	JNI_VERSION_1_4 = 0x00010004
 	JNI_VERSION_1_6 = 0x00010006
+	JNI_VERSION_1_8 = 0x00010008
+	JNI_VERSION_9   = 0x00090000
+	JNI_VERSION_10  = 0x000a0000
 
 	JNI_FALSE = 0
 	JNI_TRUE  = 1
@@ -639,18 +646,6 @@ type Jvalue = uint64
 
 type JmethodID = uintptr
 type JfieldID = uintptr
-
-func CMalloc(capacity int) unsafe.Pointer {
-	return C.malloc(C.size_t(capacity))
-}
-
-func CFree(p unsafe.Pointer) {
-	C.free(p)
-}
-
-func OfSlice(b []byte) unsafe.Pointer {
-	return unsafe.Pointer(*(*uintptr)(unsafe.Pointer(&b)))
-}
 
 type VM uintptr
 
@@ -1360,6 +1355,10 @@ func (env Env) ExceptionCheck() bool {
 	return C.ExceptionCheck((*C.JNIEnv)(unsafe.Pointer(env))) != C.JNI_FALSE
 }
 
+func (env Env) GetModule(clazz Jclass) Jobject {
+	return Jobject(C.GetModule((*C.JNIEnv)(unsafe.Pointer(env)), C.jclass(clazz)))
+}
+
 func DoubleValue(f float64) Jvalue {
 	return *(*Jvalue)(unsafe.Pointer(&f))
 }
@@ -1392,8 +1391,20 @@ func Bool(b uint8) bool {
 	return b != 0
 }
 
+func CMalloc(capacity int) unsafe.Pointer {
+	return C.malloc(C.size_t(capacity))
+}
+
+func CFree(p unsafe.Pointer) {
+	C.free(p)
+}
+
+func ByteSlicePtr(b []byte) unsafe.Pointer {
+	return unsafe.Pointer(unsafe.SliceData(b))
+}
+
 func cmem(b []byte) *C.char {
-	return (*C.char)(unsafe.Pointer(*(*uintptr)(unsafe.Pointer(&b))))
+	return (*C.char)(ByteSlicePtr(b))
 }
 
 func cbool(b bool) C.jboolean {
@@ -1408,37 +1419,37 @@ func cvals(v []Jvalue) *C.jvalue {
 	if len(v) == 0 {
 		return nil
 	}
-	return (*C.jvalue)(unsafe.Pointer(*(*uintptr)(unsafe.Pointer(&v))))
+	return (*C.jvalue)(unsafe.Pointer(unsafe.SliceData(v)))
 }
 
 func cBooleanArray(a []bool) *C.jboolean {
-	return (*C.jboolean)(unsafe.Pointer(*(*uintptr)(unsafe.Pointer(&a))))
+	return (*C.jboolean)(unsafe.Pointer(unsafe.SliceData(a)))
 }
 
 func cByteArray(a []byte) *C.jbyte {
-	return (*C.jbyte)(unsafe.Pointer(*(*uintptr)(unsafe.Pointer(&a))))
+	return (*C.jbyte)(unsafe.Pointer(unsafe.SliceData(a)))
 }
 
 func cShortArray(a []int16) *C.jshort {
-	return (*C.jshort)(unsafe.Pointer(*(*uintptr)(unsafe.Pointer(&a))))
+	return (*C.jshort)(unsafe.Pointer(unsafe.SliceData(a)))
 }
 
 func cCharArray(a []uint16) *C.jchar {
-	return (*C.jchar)(unsafe.Pointer(*(*uintptr)(unsafe.Pointer(&a))))
+	return (*C.jchar)(unsafe.Pointer(unsafe.SliceData(a)))
 }
 
 func cIntArray(a []int32) *C.jint {
-	return (*C.jint)(unsafe.Pointer(*(*uintptr)(unsafe.Pointer(&a))))
+	return (*C.jint)(unsafe.Pointer(unsafe.SliceData(a)))
 }
 
 func cLongArray(a []int64) *C.jlong {
-	return (*C.jlong)(unsafe.Pointer(*(*uintptr)(unsafe.Pointer(&a))))
+	return (*C.jlong)(unsafe.Pointer(unsafe.SliceData(a)))
 }
 
 func cFloatArray(a []float32) *C.jfloat {
-	return (*C.jfloat)(unsafe.Pointer(*(*uintptr)(unsafe.Pointer(&a))))
+	return (*C.jfloat)(unsafe.Pointer(unsafe.SliceData(a)))
 }
 
 func cDoubleArray(a []float64) *C.jdouble {
-	return (*C.jdouble)(unsafe.Pointer(*(*uintptr)(unsafe.Pointer(&a))))
+	return (*C.jdouble)(unsafe.Pointer(unsafe.SliceData(a)))
 }

@@ -59,20 +59,23 @@ const (
 	JNI_VERSION_1_2 = 0x00010002
 	JNI_VERSION_1_4 = 0x00010004
 	JNI_VERSION_1_6 = 0x00010006
+	JNI_VERSION_1_8 = 0x00010008
+	JNI_VERSION_9	= 0x00090000
+	JNI_VERSION_10	= 0x000a0000
 
 	JNI_FALSE = 0
-	JNI_TRUE = 1
+	JNI_TRUE  = 1
 
-	JNI_OK = 0                 /* success */
-	JNI_ERR = (-1)              /* unknown error */
-	JNI_EDETACHED = (-2)              /* thread detached from the VM */
-	JNI_EVERSION = (-3)              /* JNI version error */
-	JNI_ENOMEM = (-4)              /* not enough memory */
-	JNI_EEXIST = (-5)              /* VM already created */
-	JNI_EINVAL = (-6)              /* invalid arguments */
+	JNI_OK        = 0    /* success */
+	JNI_ERR       = (-1) /* unknown error */
+	JNI_EDETACHED = (-2) /* thread detached from the VM */
+	JNI_EVERSION  = (-3) /* JNI version error */
+	JNI_ENOMEM    = (-4) /* not enough memory */
+	JNI_EEXIST    = (-5) /* VM already created */
+	JNI_EINVAL    = (-6) /* invalid arguments */
 
 	JNI_COMMIT = 1
-	JNI_ABORT = 2
+	JNI_ABORT  = 2
 )
 
 type RefType int
@@ -103,18 +106,6 @@ type Jvalue = uint64
 
 type JmethodID = uintptr
 type JfieldID = uintptr
-
-func CMalloc(capacity int) unsafe.Pointer {
-	return C.malloc(C.size_t(capacity))
-}
-
-func CFree(p unsafe.Pointer) {
-	C.free(p)
-}
-
-func OfSlice(b []byte) unsafe.Pointer {
-	return unsafe.Pointer(*(*uintptr)(unsafe.Pointer(&b)))
-}
 
 type VM uintptr
 
@@ -308,8 +299,20 @@ func Bool(b uint8) bool {
 	return b != 0
 }
 
+func CMalloc(capacity int) unsafe.Pointer {
+	return C.malloc(C.size_t(capacity))
+}
+
+func CFree(p unsafe.Pointer) {
+	C.free(p)
+}
+
+func ByteSlicePtr(b []byte) unsafe.Pointer {
+	return unsafe.Pointer(unsafe.SliceData(b))
+}
+
 func cmem(b []byte) *C.char {
-	return (*C.char)(unsafe.Pointer(*(*uintptr)(unsafe.Pointer(&b))))
+	return (*C.char)(ByteSlicePtr(b))
 }
 
 func cbool(b bool) C.jboolean {
@@ -324,46 +327,45 @@ func cvals(v []Jvalue) *C.jvalue {
 	if len(v) == 0 {
 		return nil
 	}
-	return (*C.jvalue)(unsafe.Pointer(*(*uintptr)(unsafe.Pointer(&v))))
+	return (*C.jvalue)(unsafe.Pointer(unsafe.SliceData(v)))
 }
 
 func cBooleanArray(a []bool) *C.jboolean {
-	return (*C.jboolean)(unsafe.Pointer(*(*uintptr)(unsafe.Pointer(&a))))
+	return (*C.jboolean)(unsafe.Pointer(unsafe.SliceData(a)))
 }
 
 func cByteArray(a []byte) *C.jbyte {
-	return (*C.jbyte)(unsafe.Pointer(*(*uintptr)(unsafe.Pointer(&a))))
+	return (*C.jbyte)(unsafe.Pointer(unsafe.SliceData(a)))
 }
 
 func cShortArray(a []int16) *C.jshort {
-	return (*C.jshort)(unsafe.Pointer(*(*uintptr)(unsafe.Pointer(&a))))
+	return (*C.jshort)(unsafe.Pointer(unsafe.SliceData(a)))
 }
 
 func cCharArray(a []uint16) *C.jchar {
-	return (*C.jchar)(unsafe.Pointer(*(*uintptr)(unsafe.Pointer(&a))))
+	return (*C.jchar)(unsafe.Pointer(unsafe.SliceData(a)))
 }
 
 func cIntArray(a []int32) *C.jint {
-	return (*C.jint)(unsafe.Pointer(*(*uintptr)(unsafe.Pointer(&a))))
+	return (*C.jint)(unsafe.Pointer(unsafe.SliceData(a)))
 }
 
 func cLongArray(a []int64) *C.jlong {
-	return (*C.jlong)(unsafe.Pointer(*(*uintptr)(unsafe.Pointer(&a))))
+	return (*C.jlong)(unsafe.Pointer(unsafe.SliceData(a)))
 }
 
 func cFloatArray(a []float32) *C.jfloat {
-	return (*C.jfloat)(unsafe.Pointer(*(*uintptr)(unsafe.Pointer(&a))))
+	return (*C.jfloat)(unsafe.Pointer(unsafe.SliceData(a)))
 }
 
 func cDoubleArray(a []float64) *C.jdouble {
-	return (*C.jdouble)(unsafe.Pointer(*(*uintptr)(unsafe.Pointer(&a))))
+	return (*C.jdouble)(unsafe.Pointer(unsafe.SliceData(a)))
 }
 `)
 
 	return buf.String()
 }
 
-//
 // 处理参数，去掉参数中的 const
 // 处理返回值，去掉返回值中的 const
 func generateFuncCode(m *method, buf *bytes.Buffer) (skip bool, err error) {

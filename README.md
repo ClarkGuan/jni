@@ -9,15 +9,8 @@
 
 安装前准备：
 
-- 安装 JDK，并设置 JAVA_HOME 环境变量
-- 安装 includejni ( go get -u github.com/ClarkGuan/includejni )
-- 运行下面命令
-
-```
-git clone https://github.com/ClarkGuan/jni
-cd jni
-./build.sh
-```
+- 安装 JDK，并设置 `JAVA_HOME` 环境变量
+- 安装 `includejni` (参考 [https://github.com/ClarkGuan/includejni](https://github.com/ClarkGuan/includejni))
 
 ### 使用举例
 
@@ -61,7 +54,7 @@ public class Main {
 gojni src/java/com/demo/Main.java
 ```
 
-* 此时在目录中生成文件 libs.c 和 libs.go，我们修改 libs.go 文件内容如下：
+* 此时在目录中生成文件 `libs.c` 和 `libs.go`，我们修改 `libs.go` 文件内容如下：
 
 ```go
 package main
@@ -99,6 +92,14 @@ func jni_com_demo_stringFromJNI2(env uintptr, clazz uintptr) uintptr {
 
 ```
 
+运行下面命令
+
+```
+go get github.com/ClarkGuan/jni@latest
+```
+
+将本 golang 库引入到 `go.mod` 文件中。
+
 * 运行 go build 生成 Mac 上运行的动态库文件：
 
 ```bash
@@ -111,11 +112,15 @@ go build -buildmode=c-shared -ldflags="-w -s" -v -x -o libhello.dylib
 CGO_CFLAGS="-I$JAVA_HOME/include -I$JAVA_HOME/include/darwin" go build -buildmode=c-shared -ldflags="-w -s" -v -x -o libhello.dylib
 ```
 
-或者使用前面下载的 includejni 工具：
+或者使用前面下载的 `includejni` 工具：
 
 ```bash
 includejni go build -buildmode=c-shared -ldflags="-w -s" -v -x -o libhello.dylib
 ```
+
+> 注意
+> 
+> `includejni` 工具只是帮您设置 `CGO_CFLAGS` 和 `CGO_CXXFLAGS` 环境变量。如果您可以定义 localhost 的 JDK 头文件位置，则完全不需要此工具。
 
 * 编译 Java 源码
 
@@ -123,7 +128,7 @@ includejni go build -buildmode=c-shared -ldflags="-w -s" -v -x -o libhello.dylib
 javac src/java/com/demo/Main.java
 ```
 
-* 将 libhello.dylib 放入 Java 虚拟机可以找到的位置（通过 Java 环境变量 java.library.path 指定）
+* 将 `libhello.dylib` 放入 Java 虚拟机可以找到的位置（通过 Java 环境变量 `java.library.path` 指定）
 
 * 运行 Java 程序
 
