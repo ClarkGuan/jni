@@ -584,10 +584,6 @@ package jni
 //     return (*env)->GetDirectBufferCapacity(env, buf);
 // }
 //
-// static inline jobject GetModule(JNIEnv * env, jclass clazz) {
-//     return (*env)->GetModule(env, clazz);
-// }
-//
 import "C"
 import (
 	"unicode/utf16"
@@ -1353,10 +1349,6 @@ func (env Env) DeleteWeakGlobalRef(ref Jweak) {
 
 func (env Env) ExceptionCheck() bool {
 	return C.ExceptionCheck((*C.JNIEnv)(unsafe.Pointer(env))) != C.JNI_FALSE
-}
-
-func (env Env) GetModule(clazz Jclass) Jobject {
-	return Jobject(C.GetModule((*C.JNIEnv)(unsafe.Pointer(env)), C.jclass(clazz)))
 }
 
 func DoubleValue(f float64) Jvalue {
